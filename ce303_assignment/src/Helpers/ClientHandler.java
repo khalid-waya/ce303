@@ -4,11 +4,11 @@ import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
-    private final Socket socket; private final Customer_Order customerOrder;
+    private final Socket socket;
 
-    public ClientHandler(Socket socket, Customer_Order customerOrder) {
+    public ClientHandler(Socket socket) {
         this.socket = socket;
-        this.customerOrder = customerOrder;
+
     }
 
     @Override
