@@ -3,7 +3,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class Customer {
+public class Customer implements AutoCloseable{
     //hshhssh
     final int port = 1234;
     static Socket socket ;
@@ -12,13 +12,13 @@ public class Customer {
     static BufferedReader bufferedReader;
     static BufferedWriter bufferedWriter;
     Scanner scan;
-    public Customer(String name) throws Exception {
-        socket = new Socket("localhost", port);
+    public Customer(String host, int port) throws Exception {
+        socket = new Socket(host, port);
         inputStreamReader = new InputStreamReader(socket.getInputStream());
         outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
         bufferedReader = new BufferedReader(inputStreamReader);
         bufferedWriter = new BufferedWriter(outputStreamWriter);
-        bufferedWriter.write(name);
+        scan = new Scanner(System.in); // Initialize the Scanner
         String line = scan.nextLine();
         if (line.trim().equalsIgnoreCase("success")) throw new Exception(line);
     }
@@ -44,31 +44,50 @@ public class Customer {
 //        return accounts;   // Return accounts array (or, to be exact, a reference to the array)
 //    }
 
+    private static void getAndSendUserName() {
 
-    public static void main(String[] args) throws IOException {
-        System.out.println("'Barista' - Good day, what is your name: ");
-      try{
-          Scanner scanner = new Scanner(System.in);
-          String name = scanner.nextLine();
-          try{
-              Customer customer = new Customer(name);
-              System.out.println("Logged in successfully.");
-              while (true){
+        Scanner scanner = new Scanner(System.in);
 
-              }
+        System.out.print("'Server' - what is your name: ");
+        String userName = scanner.nextLine();
 
-          } catch (Exception e) {
-              socket.close();
-              inputStreamReader.close();
-              outputStreamWriter.close();
-              bufferedReader.close();
-              bufferedWriter.close();
-          }
+        try {
+            bufferedWriter.write(userName);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
 
-      } catch (IOException e) {
-          throw new RuntimeException(e);
-      }
+            String response = bufferedReader.readLine();
+            System.out.println(response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        socket.close();
+        inputStreamReader.close();
+        outputStreamWriter.close();
+        bufferedReader.close();
+        bufferedWriter.close();
+        scan.close();
+    }
+    public static void main(String[] args) {
+        System.out.println("Press enter to walk in to cafe");
+        try (Customer customer = new Customer("localhost", 1234)) {
+            System.out.println("Welcome to the Virtual Cafe!");
+            getAndSendUserName();
+            while (true) {
+
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
 }
+
