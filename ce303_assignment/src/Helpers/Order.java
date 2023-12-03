@@ -2,15 +2,11 @@ package Helpers;
 
 public class Order {
 
-    private final int orderID; private final String customerName; private String order_name;
+    private final String customerName; private String order_name;
 
-    public Order(int orderID, String customerName)
+    public Order(String customerName)
     {   this.customerName = customerName;
-        this.orderID    = orderID;
-    }
 
-    public int getOrderID() {
-        return orderID;
     }
 
     public String getCustomerName() {
